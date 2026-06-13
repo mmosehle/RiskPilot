@@ -10,6 +10,8 @@
   <meta name="theme-color" content="#0d0f14" />
   <title>RiskPilot — Master Your Risk</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -55,6 +57,10 @@
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         <span>P&amp;L Calendar</span>
       </button>
+      <button class="nav-btn" data-tab="profile" onclick="switchTab('profile')">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        <span>My Profile</span>
+      </button>
     </nav>
 
     <!-- Currency Toggle -->
@@ -70,6 +76,10 @@
       <div class="wallet-label">Weekly Return Wallet</div>
       <div class="wallet-amount" id="sidebar-wallet-val">R 0.00</div>
       <div class="wallet-sub" id="sidebar-winrate">Win rate: 0%</div>
+      <div class="sidebar-user" id="sidebar-user">
+        <div class="sidebar-user-name" id="sidebar-user-name">Loading…</div>
+        <button class="btn-signout" onclick="handleSignOut()">Sign Out</button>
+      </div>
     </div>
   </aside>
 
@@ -373,6 +383,62 @@
             </table>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ══════════ TAB: PROFILE ══════════ -->
+    <section id="tab-profile" class="tab-section">
+      <div class="two-col" style="max-width:700px;">
+
+        <!-- Account Info Card -->
+        <div class="card" style="grid-column:1/-1;">
+          <div class="card-header-row">
+            <h2 class="card-title" style="margin-bottom:0;">My Profile</h2>
+            <span class="badge badge-blue" id="profile-member-since"></span>
+          </div>
+          <div class="profile-avatar" id="profile-avatar">?</div>
+          <div class="profile-info-grid">
+            <div class="profile-field">
+              <span class="profile-field-label">First Name</span>
+              <span class="profile-field-val" id="prof-name">—</span>
+            </div>
+            <div class="profile-field">
+              <span class="profile-field-label">Last Name</span>
+              <span class="profile-field-val" id="prof-surname">—</span>
+            </div>
+            <div class="profile-field" style="grid-column:1/-1;">
+              <span class="profile-field-label">Email Address</span>
+              <span class="profile-field-val" id="prof-email">—</span>
+            </div>
+            <div class="profile-field" style="grid-column:1/-1;">
+              <span class="profile-field-label">Marketing Emails</span>
+              <span class="profile-field-val" id="prof-marketing">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats summary -->
+        <div class="card">
+          <h2 class="card-title">Account Stats</h2>
+          <table class="stats-table">
+            <tr><td>Total trades logged</td><td id="prof-trades">0</td></tr>
+            <tr><td>Overall win rate</td><td id="prof-winrate">0%</td></tr>
+            <tr><td>Weekly Return Wallet</td><td id="prof-wallet" class="green">R 0.00</td></tr>
+            <tr><td>Best R:R achieved</td><td id="prof-bestrr" class="green">—</td></tr>
+          </table>
+        </div>
+
+        <!-- Danger zone -->
+        <div class="card card-danger">
+          <h2 class="card-title" style="color:var(--red);">Danger Zone</h2>
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:1rem;">
+            Clicking Reset Data will permanently delete all your journal entries, trade history, budget settings, and weekly wallet balance. This cannot be undone.
+          </p>
+          <button class="btn btn-red" onclick="confirmReset()">
+            &#9888; Reset All My Data
+          </button>
+        </div>
+
       </div>
     </section>
 
