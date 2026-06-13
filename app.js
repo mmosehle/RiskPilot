@@ -50,11 +50,24 @@ const MONTHS = ["January","February","March","April","May","June",
                 "July","August","September","October","November","December"];
 
 /* ═══════════════════════════════════════════════
+   PATH HELPER — works for local, Live Server AND GitHub Pages subfolders
+   e.g. https://user.github.io/riskpilot/index.html
+   → base = 'https://user.github.io/riskpilot/'
+═══════════════════════════════════════════════ */
+function basePath() {
+  const p = window.location.pathname;          // e.g. /riskpilot/index.html
+  return window.location.origin + p.substring(0, p.lastIndexOf('/') + 1);
+}
+function goTo(file) {
+  window.location.href = basePath() + file;
+}
+
+/* ═══════════════════════════════════════════════
    AUTH GUARD + BOOT
 ═══════════════════════════════════════════════ */
 async function boot() {
   const { data: { session } } = await supabase.auth.getSession();
-  if (!session) { window.location.href = 'auth.html'; return; }
+  if (!session) { goTo('auth.html'); return; }
   state.user = session.user;
   updateSidebarUser();
   await loadUserData();
@@ -76,7 +89,7 @@ async function handleSignOut() {
   if (!confirm('Sign out of RiskPilot?')) return;
   await saveUserData();
   await supabase.auth.signOut();
-  window.location.href = 'auth.html';
+  goTo('auth.html');
 }
 
 /* ═══════════════════════════════════════════════

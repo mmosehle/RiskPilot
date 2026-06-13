@@ -395,6 +395,19 @@
     text.textContent = pw.length ? 'Password strength: ' + l.label : '';
   }
 
+  /* ── PATH HELPER ──
+     Works for local files, Live Server, AND GitHub Pages subfolders.
+     e.g.  https://user.github.io/riskpilot/auth.html
+     → base = 'https://user.github.io/riskpilot/'
+  ── */
+  function basePath() {
+    const p = window.location.pathname;          // e.g. /riskpilot/auth.html
+    return window.location.origin + p.substring(0, p.lastIndexOf('/') + 1);
+  }
+  function goTo(file) {
+    window.location.href = basePath() + file;
+  }
+
   /* ── AUTH HANDLERS ── */
   async function handleLogin() {
     const email    = document.getElementById('login-email').value.trim();
@@ -405,15 +418,15 @@
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading('login-btn', false, 'Sign In');
     if (error) { showAlert('login-error', error.message); return; }
-    window.location.href = 'index.html';
+    goTo('dashboard.html');
   }
 
   async function handleSignup() {
-    const name     = document.getElementById('signup-name').value.trim();
-    const surname  = document.getElementById('signup-surname').value.trim();
-    const email    = document.getElementById('signup-email').value.trim();
-    const password = document.getElementById('signup-password').value;
-    const confirm  = document.getElementById('signup-confirm').value;
+    const name      = document.getElementById('signup-name').value.trim();
+    const surname   = document.getElementById('signup-surname').value.trim();
+    const email     = document.getElementById('signup-email').value.trim();
+    const password  = document.getElementById('signup-password').value;
+    const confirm   = document.getElementById('signup-confirm').value;
     const marketing = document.getElementById('marketing-opt').checked;
     clearAlerts();
     if (!name || !surname || !email || !password) { showAlert('signup-error', 'Please fill in all fields.'); return; }
@@ -435,7 +448,7 @@
     if (!email) { showAlert('reset-error', 'Please enter your email address.'); return; }
     setLoading('reset-btn', true, 'Send Reset Link');
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/index.html?reset=true'
+      redirectTo: basePath() + 'dashboard.html'
     });
     setLoading('reset-btn', false, 'Send Reset Link');
     if (error) { showAlert('reset-error', error.message); return; }
@@ -444,7 +457,7 @@
 
   // If already logged in, skip auth page
   supabase.auth.getSession().then(({ data }) => {
-    if (data.session) window.location.href = 'index.html';
+    if (data.session) goTo('dashboard.html');
   });
 
   // Allow Enter key to submit
